@@ -40,6 +40,10 @@
                 @endif
 
                 <x-button class="ml-4">
+                    <a href="{{ url('/register') }}" class="text-sm text-white-700">Register</a>
+                </x-button>
+
+                <x-button class="ml-4">
                     {{ __('Log in') }}
                 </x-button>
             </div>

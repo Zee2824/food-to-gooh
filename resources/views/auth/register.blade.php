@@ -52,6 +52,10 @@
                 </a>
 
                 <x-button class="ml-4">
+                    <a href="{{ url('/login') }}" class="text-sm text-white-700">Log in</a>
+                </x-button>
+
+                <x-button class="ml-4">
                     {{ __('Register') }}
                 </x-button>
             </div>
