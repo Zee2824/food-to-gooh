@@ -6,56 +6,270 @@
     <title>My Love Letter</title>
 </head>
 <style>
-    body {
-      background: linear-gradient(135deg, #ffd6e8, #ffeef5);
-      font-family: 'Georgia', serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
+body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden; /* prevent scrolling */
+    background: linear-gradient(135deg, #ffd6e7, #ffeaa7);
+    cursor: pointer;
+    font-family: sans-serif;
+}
 
-    .letter {
-      background: white;
-      padding: 30px 40px;
-      max-width: 400px;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-      text-align: center;
-    }
+/* --- FLOATING ANIMATION --- */
+@keyframes floatUp {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+}
 
-    .letter h1 {
-      color: #e75480;
-      margin-bottom: 15px;
-    }
+.float {
+    position: absolute;
+    animation: floatUp linear forwards;
+    pointer-events: none;
+}
 
-    .letter p {
-      color: #444;
-      font-size: 16px;
-      line-height: 1.6;
-    }
+/* --- FLOWERS --- */
+.flower {
+    width: 10vw;
+    max-width: 90px;
+    height: 10vw;
+    max-height: 90px;
+    position: relative;
+}
 
-    .signature {
-      margin-top: 20px;
-      font-style: italic;
-      color: #e75480;
-    }
-  </style>
+.petal {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    border-radius: 50%;
+}
+
+.petal:nth-child(1) { top: 0; left: 25%; }
+.petal:nth-child(2) { top: 25%; left: 0; }
+.petal:nth-child(3) { top: 25%; right: 0; }
+.petal:nth-child(4) { bottom: 0; left: 25%; }
+
+.center {
+    position: absolute;
+    top: 33%;
+    left: 33%;
+    width: 33%;
+    height: 33%;
+    background: gold;
+    border-radius: 50%;
+}
+
+/* --- BIG HEART --- */
+.big-heart {
+    position: absolute;
+    width: 15vw;
+    max-width: 90px;
+    height: 15vw;
+    max-height: 90px;
+    background: #ff4d6d;
+    transform: rotate(45deg);
+    animation: floatUp 6s linear forwards;
+}
+
+.big-heart::before,
+.big-heart::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    border-radius: 50%;
+}
+
+.big-heart::before { top: -50%; left: 0; }
+.big-heart::after { left: -50%; top: 0; }
+
+/* --- CENTERED MESSAGE --- */
+.center-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: clamp(16px, 3vw, 32px);
+    max-width: 90%;
+    font-weight: bold;
+    text-align: center;
+    opacity: 0;
+    animation: fadeIn 0.8s ease forwards; /* ONLY fade in, no floating */
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    word-wrap: break-word;
+    line-height: 1.2;
+    border-radius: 12px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 1em;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(0,0,0,0.7);
+}
+
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, -45%); }
+    to   { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+@media (max-width: 480px) {
+    .center-message { font-size: 6vw; }
+    .flower { width: 15vw; height: 15vw; }
+    .big-heart { width: 20vw; height: 20vw; }
+}
+</style>
+</head>
 <body>
-    <div class="letter">
-    <h1>My Love Chai💕</h1>
-    <p>
-      Every day with you feels softer, brighter, and a little more magical.
-      Thank you for being my favorite thought, my calm, and my happiness.
-    </p>
-    <p>
-      I’m grateful for you—today and always.
-    </p>
-    <div class="signature">
-      With all my heart,<br>
-      Yours BanBan❤️
-    </div>
-  </div>
+
+<script>
+// --- SWEET MESSAGES ---
+const messages = [
+    {
+        text: " 'Every moment with you feels like a beautiful dream I never want to wake from. 🏔️' ",
+        image: "images/two.png"
+    },
+    {
+        text: " 'You are my treasure 💎'",
+        image: "images/one.png"
+    },
+    {
+        text: "'I fall in love with you more every single day. 🌞'",
+        image: "images/three.png"
+    },
+    {
+        text: "'You are magical 🌟'",
+        image: "images/four.png"
+    },
+    {
+        text: "'With you, even the simplest moments feel magical. 💫'",
+        image: "images/five.png"
+    },
+    {
+        text: "'My favorite person 😘",
+        image: "images/six.png"
+    },
+    {
+        text: "'Being with you is my favorite place to be. 💖",
+        image: "images/eyt.png"
+    },
+    {
+        text: "'Every heartbeat whispers your name... I love You My Love Chai 🌸 - BanBan 🌸💖",
+        image: "images/zeven.png"
+    }
+];
+
+let messageIndex = 0;
+
+// --- CREATE FLOWER ---
+function createFlower() {
+    const container = document.createElement("div");
+    container.className = "float";
+
+    const flower = document.createElement("div");
+    flower.className = "flower";
+
+    const colors = ["#ff6b81", "#feca57", "#ff9ff3", "#48dbfb", "#1dd1a1"];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+
+    for (let i = 0; i < 4; i++) {
+        const petal = document.createElement("div");
+        petal.className = "petal";
+        petal.style.background = color;
+        flower.appendChild(petal);
+    }
+
+    const center = document.createElement("div");
+    center.className = "center";
+    flower.appendChild(center);
+
+    container.appendChild(flower);
+
+    // Ensure flower starts fully in viewport
+    const flowerWidth = window.innerWidth * 0.1; // adjust for vw
+    container.style.left = Math.random() * (window.innerWidth - flowerWidth) + "px";
+    container.style.bottom = "-15vh";
+
+    const duration = 6 + Math.random() * 4;
+    container.style.animationDuration = duration + "s";
+
+    document.body.appendChild(container);
+    setTimeout(() => container.remove(), duration * 1000);
+}
+
+// --- CREATE BIG HEART ---
+function createBigHeart(x, y) {
+    const heart = document.createElement("div");
+    heart.className = "float big-heart";
+
+    const size = heart.offsetWidth || 90;
+
+    // Keep heart fully inside viewport
+    const xPos = Math.min(Math.max(x, size / 2), window.innerWidth - size / 2);
+    const yPos = Math.min(Math.max(y, size / 2), window.innerHeight - size / 2);
+    heart.style.left = (xPos - size / 2) + "px";
+    heart.style.top = (yPos - size / 2) + "px";
+
+    document.body.appendChild(heart);
+
+    setTimeout(() => heart.remove(), 6000);
+}
+
+// --- AUTO FLOWERS ---
+setInterval(createFlower, 500);
+
+// --- CLICK HANDLER ---
+document.addEventListener("click", function(e) {
+    const oldMessage = document.querySelector(".center-message");
+    if (oldMessage) oldMessage.remove();
+
+    const currentMessage = messages[messageIndex];
+    messageIndex = (messageIndex + 1) % messages.length;
+
+    createBigHeart(e.clientX, e.clientY);
+
+    // Create message container
+    const messageContainer = document.createElement("div");
+messageContainer.className = "center-message";
+messageContainer.innerText = currentMessage.text;
+
+// --- FIXED SIZE & BACKGROUND IMAGE ---
+if (currentMessage.image) {
+    messageContainer.style.backgroundImage = `url('${currentMessage.image}')`;
+    messageContainer.style.backgroundSize = "cover";
+    messageContainer.style.backgroundPosition = "center";
+    messageContainer.style.backgroundRepeat = "no-repeat";
+
+    // Fixed size
+    messageContainer.style.width = "300px";
+    messageContainer.style.height = "200px";
+
+    // Center text inside
+    messageContainer.style.display = "flex";
+    messageContainer.style.flexDirection = "column";
+    messageContainer.style.justifyContent = "center";
+    messageContainer.style.alignItems = "center";
+    messageContainer.style.textAlign = "center";
+
+    // Styling
+    messageContainer.style.color = "#fff";
+    messageContainer.style.textShadow = "0 0 10px rgba(0,0,0,0.7)";
+    messageContainer.style.padding = "1em";
+    messageContainer.style.borderRadius = "12px";
+}
+
+document.body.appendChild(messageContainer);
+
+
+    setTimeout(() => messageContainer.remove(), 4000);
+});
+
+
+</script>
+
 </body>
 </html>
